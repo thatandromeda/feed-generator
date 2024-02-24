@@ -2,10 +2,11 @@ import dotenv from 'dotenv'
 import { BlobRef } from '@atproto/api'
 import fs from 'fs/promises'
 import { ids } from '../src/lexicon/lexicons'
-import { agent } from '../src/util/agent'
+import { getAgent } from '../src/util/agent'
 
 const run = async () => {
   dotenv.config()
+  const agent = await getAgent()
 
   // A short name for the record that will show in urls
   // Lowercase with no spaces.
