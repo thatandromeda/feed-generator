@@ -66,8 +66,6 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       let total_retrieved = 1
       let current_cursor: string | undefined = undefined
 
-      console.log(`let's check out ${list}`)
-
       // DEBUG: We know that we manage to retrieve a lot of list members. The problem
       // is not here, except insofar as this might be an infinite loop.
       while (total_retrieved > 0) {
@@ -79,7 +77,8 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
         // DEBUG: we are definitely getting so many members
         console.log("Let's introspect us some data")
         console.log(JSON.stringify(Object.keys(list_members)))
-        console.log(list_members.data)
+        console.log(list_members.data.items.length)
+        console.log(list_members.data.cursor)
         total_retrieved = list_members.data.items.length
         current_cursor = list_members.data.cursor
 
