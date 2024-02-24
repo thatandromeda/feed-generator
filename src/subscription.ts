@@ -23,9 +23,7 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
         ) {
           console.log(`Skybrary candidate post found. Author: ${create.author}`)
           if (all_members.includes(create.author)) {
-            console.log(
-              `This should be a real post. Its author DID is ${create.author}`,
-            )
+            console.log('Skybrary post found!')
             return true
           }
         }
@@ -33,9 +31,6 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       })
       .map((create) => {
         // map skybrarian posts to a db row
-        console.log(
-          `db row (except index timestamp): uri ${create.uri}, cid ${create.cid}, replyParent ${create.record?.reply?.parent.uri ?? null}, replyRoot ${create.record?.reply?.root.uri ?? null}`,
-        )
         return {
           uri: create.uri,
           cid: create.cid,
