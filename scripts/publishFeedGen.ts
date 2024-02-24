@@ -2,34 +2,36 @@ import dotenv from 'dotenv'
 import { AtpAgent, BlobRef } from '@atproto/api'
 import fs from 'fs/promises'
 import { ids } from '../src/lexicon/lexicons'
+import { getAgent } from '../src/util/agent';
 
 const run = async () => {
   dotenv.config()
+  const agent = await getAgent()
 
   // YOUR bluesky handle
   // Ex: user.bsky.social
-  const handle = ''
+  const handle = `${process.env.FEEDGEN_HANDLE}`
 
   // YOUR bluesky password, or preferably an App Password (found in your client settings)
   // Ex: abcd-1234-efgh-5678
-  const password = ''
+  const password = `${process.env.FEEDGEN_PASSWORD}`
 
   // A short name for the record that will show in urls
   // Lowercase with no spaces.
   // Ex: whats-hot
-  const recordName = ''
+  const recordName = `${process.env.FEED_NAME}`
 
   // A display name for your feed
   // Ex: What's Hot
-  const displayName = ''
+  const displayName = `${process.env.FEED_DISPLAY_NAME}`
 
   // (Optional) A description of your feed
   // Ex: Top trending content from the whole network
-  const description = ''
+  const description = `${process.env.FEED_DESCRIPTION}`
 
   // (Optional) The path to an image to be used as your feed's avatar
   // Ex: ~/path/to/avatar.jpeg
-  const avatar: string = ''
+  const avatar: string = `${process.env.FEED_AVATAR}`
 
   // -------------------------------------
   // NO NEED TO TOUCH ANYTHING BELOW HERE
@@ -40,10 +42,6 @@ const run = async () => {
   }
   const feedGenDid =
     process.env.FEEDGEN_SERVICE_DID ?? `did:web:${process.env.FEEDGEN_HOSTNAME}`
-
-  // only update this if in a test environment
-  const agent = new AtpAgent({ service: 'https://bsky.social' })
-  await agent.login({ identifier: handle, password })
 
   let avatarRef: BlobRef | undefined
   if (avatar) {
