@@ -21,9 +21,13 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
             .toLowerCase()
             .includes(`${process.env.FEEDGEN_SYMBOL}`)
         ) {
-          console.log(`We found something with the feedgen symbol: ${create}`)
-          console.log(`Just in case, its author was: ${create.author}`)
-          if (all_members.includes(create.author)) {
+          // The db contains only DIDs, but this call returns them formatted as
+          // `did:plc:did_goes_here`.
+          const authorDID = create.author.replace('did:plc:', '')
+          if (all_members.includes(authorDID)) {
+            console.log(
+              `This should be a real post. Its author is ${authorDID}`,
+            )
             return true
           }
         }
