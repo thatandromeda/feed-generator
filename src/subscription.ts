@@ -11,6 +11,7 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
     const ops = await getOpsByType(evt)
 
     const all_members = await this.getMembers()
+    console.log(`Members: ${all_members}`)
 
     const postsToDelete = ops.posts.deletes.map((del) => del.uri)
     const postsToCreate = ops.posts.creates
@@ -21,6 +22,8 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
             .toLowerCase()
             .includes(`${process.env.FEEDGEN_SYMBOL}`)
         ) {
+          console.log(`We found something with the feedgen symbol: ${create}`)
+          console.log(`Just in case, its author was: ${create.author}`)
           if (all_members.includes(create.author)) {
             return true
           }
@@ -45,6 +48,7 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
         .execute()
     }
     if (postsToCreate.length > 0) {
+      console.log(`Time to create ${postsToCreate.length} post(s)`)
       await this.db
         .insertInto('post')
         .values(postsToCreate)
