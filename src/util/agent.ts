@@ -12,5 +12,6 @@ const password = `${process.env.FEEDGEN_PASSWORD}`
 export async function getAgent() {
   const agent = new AtpAgent({ service: 'https://bsky.social' });
   await agent.login({ identifier: handle, password });
+  console.log("💻 Logged in")
   return agent
 }
