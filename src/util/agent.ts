@@ -1,4 +1,4 @@
-import { AtpAgent, BlobRef } from '@atproto/api'
+import { AtpAgent } from '@atproto/api'
 
 // YOUR bluesky handle
 // Ex: user.bsky.social
@@ -10,7 +10,7 @@ const password = `${process.env.FEEDGEN_PASSWORD}`
 
 
 export async function getAgent() {
-  const agent = new AtpAgent({ service: `${process.env.FEEDGEN_SUBSCRIPTION_ENDPOINT}` });
+  const agent = new AtpAgent({ service: 'https://bsky.social' });
   await agent.login({ identifier: handle, password });
   return agent
 }
