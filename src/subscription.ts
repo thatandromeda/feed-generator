@@ -21,12 +21,13 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
             .toLowerCase()
             .includes(`${process.env.FEEDGEN_SYMBOL}`)
         ) {
+          console.log(`Skybrary candidate post found. Author: ${create.author}`)
           // The db contains only DIDs, but this call returns them formatted as
           // `did:plc:did_goes_here`.
           const authorDID = create.author.replace('did:plc:', '')
           if (all_members.includes(authorDID)) {
             console.log(
-              `This should be a real post. Its author is ${authorDID}`,
+              `This should be a real post. Its author DID is ${authorDID}`,
             )
             return true
           }
@@ -35,6 +36,9 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       })
       .map((create) => {
         // map skybrarian posts to a db row
+        console.log(
+          `db row (except index timestamp): uri ${create.uri}, cid ${create.cid}, replyParent ${create.record?.reply?.parent.uri ?? null}, replyRoot ${create.record?.reply?.root.uri ?? null}`,
+        )
         return {
           uri: create.uri,
           cid: create.cid,
@@ -43,6 +47,7 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       })
 
     if (postsToDelete.length > 0) {
+      console.log('there are posts to delete')
       await this.db
         .deleteFrom('post')
         .where('uri', 'in', postsToDelete)
