@@ -10,13 +10,13 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
     if (!isCommit(evt)) return
     const ops = await getOpsByType(evt)
 
-    const all_members = await getMembers()
+    const all_members = await this.getMembers()
 
     const postsToDelete = ops.posts.deletes.map((del) => del.uri)
     const postsToCreate = ops.posts.creates
       .filter((create) => {
         // only skybrarian posts
-        if create.record.text.toLowerCase().includes(`${process.env.FEEDGEN_SYMBOL}`) {
+        if (create.record.text.toLowerCase().includes(`${process.env.FEEDGEN_SYMBOL}`)) {
           if (all_members.includes(create.author)) {
             return true
           }
@@ -49,7 +49,7 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
     }
   }
 
-  async function getMembers() {
+  async getMembers() {
     const lists:string[] = `${process.env.FEEDGEN_LISTS}`.split("|")
     const agent = await getAgent()
 
