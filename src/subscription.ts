@@ -3,7 +3,7 @@ import {
   isCommit,
 } from './lexicon/types/com/atproto/sync/subscribeRepos'
 import { FirehoseSubscriptionBase, getOpsByType } from './util/subscription'
-import { getAgent } from './util/agent'
+import { agent } from './util/agent'
 
 export class FirehoseSubscription extends FirehoseSubscriptionBase {
   async handleEvent(evt: RepoEvent) {
@@ -57,7 +57,6 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
   async getMembers() {
     const lists: string[] = `${process.env.FEEDGEN_LISTS}`.split('|')
     console.log(`📝 Lists found: ${lists}`)
-    const agent = await getAgent()
     let all_members: string[] = []
 
     while (lists.length > 0) {
