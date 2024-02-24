@@ -22,14 +22,9 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
             .includes(`${process.env.FEEDGEN_SYMBOL}`)
         ) {
           console.log(`Skybrary candidate post found. Author: ${create.author}`)
-          // The db contains only DIDs, but this call returns them formatted as
-          // `did:plc:did_goes_here`.
-          const authorDID = create.author.replace('did:plc:', '')
-          console.log(`authorDID: ${authorDID}`)
-          console.log(all_members)
-          if (all_members.includes(authorDID)) {
+          if (all_members.includes(create.author)) {
             console.log(
-              `This should be a real post. Its author DID is ${authorDID}`,
+              `This should be a real post. Its author DID is ${create.author}`,
             )
             return true
           }
