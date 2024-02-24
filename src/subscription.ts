@@ -11,7 +11,6 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
     const ops = await getOpsByType(evt)
 
     const all_members = await this.getMembers()
-    console.log(`Members: ${all_members}`)
 
     const postsToDelete = ops.posts.deletes.map((del) => del.uri)
     const postsToCreate = ops.posts.creates
@@ -68,28 +67,36 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       let total_retrieved = 100
       let current_cursor: string | undefined = undefined
 
-      // DEBUG: We know that we manage to retrieve a lot of list members. The problem
-      // is not here, except insofar as this might be an infinite loop.
+      // total_retrieved will be smaller than 100 when we run off the end of the cursor...
+      // unless we have a number of members evenly divisible by 100. Not sure how one was
+      // intended to handle this.
       while (total_retrieved === 100) {
         const list_members = await agent.api.app.bsky.graph.getList({
           list: `${list}`,
           limit: 100,
           cursor: current_cursor,
         })
-        // DEBUG: we are definitely getting so many members
         total_retrieved = list_members.data.items.length
         current_cursor = list_members.data.cursor
 
-        // DEBUG: This runs the first time through, and then we infinite-loop this.
+        let escapeLoop = true
         list_members.data.items.forEach((member) => {
           if (!all_members.includes(member.subject.did)) {
+            escapeLoop = false
             all_members.push(member.subject.did)
           }
         })
+
+        // In the case that the number of list members is evenly divisible by 100, the
+        // while loop will never terminate. We assume that, if we have added no new list
+        // members to all_members in this pass, we must be repeating ourselves. Time to
+        // flee the loop.
+        if (escapeLoop) {
+          break
+        }
       }
     }
 
-    console.log('returning members')
     return all_members
   }
 }
