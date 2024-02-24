@@ -31,6 +31,9 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       })
       .map((create) => {
         // map skybrarian posts to a db row
+        console.log(
+          `db row (except index timestamp): uri ${create.uri}, cid ${create.cid}, replyParent ${create.record?.reply?.parent.uri ?? null}, replyRoot ${create.record?.reply?.root.uri ?? null}`,
+        )
         return {
           uri: create.uri,
           cid: create.cid,
@@ -40,10 +43,20 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
         }
       })
 
+    // const timeStr = new Date(parseInt(indexedAt, 10)).toISOString()
+    // builder = builder
+    //   .where('post.indexedAt', '<', timeStr)
+    //   .orWhere((qb) => qb.where('post.indexedAt', '=', timeStr))
+    //   .where('post.cid', '<', cid)
+
     if (postsToDelete.length > 0) {
+      const oneWeekAgoStr = new Date(
+        new Date().getTime() - 7 * 24 * 60 * 60 * 1000,
+      ).toISOString()
       await this.db
         .deleteFrom('post')
         .where('uri', 'in', postsToDelete)
+        .where('indexedAt', '<', oneWeekAgoStr)
         .execute()
     }
     if (postsToCreate.length > 0) {
