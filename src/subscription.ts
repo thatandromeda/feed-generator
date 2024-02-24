@@ -65,12 +65,12 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
 
     while (lists.length > 0) {
       const list = lists.pop()
-      let total_retrieved = 1
+      let total_retrieved = 100
       let current_cursor: string | undefined = undefined
 
       // DEBUG: We know that we manage to retrieve a lot of list members. The problem
       // is not here, except insofar as this might be an infinite loop.
-      while (total_retrieved > 0) {
+      while (total_retrieved === 100) {
         const list_members = await agent.api.app.bsky.graph.getList({
           list: `${list}`,
           limit: 100,
@@ -78,7 +78,6 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
         })
         // DEBUG: we are definitely getting so many members
         console.log("Let's introspect us some data")
-        console.log(JSON.stringify(Object.keys(list_members)))
         console.log(list_members.data.items.length)
         console.log(list_members.data.cursor)
         total_retrieved = list_members.data.items.length
