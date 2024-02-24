@@ -78,7 +78,10 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
           limit: 100,
           cursor: current_cursor,
         })
-        console.log(JSON.stringify(list_members))
+        // DEBUG: we are definitely getting so many members
+        console.log("Let's introspect us some data")
+        console.log(JSON.stringify(Object.keys(list_members)))
+        console.log(list_members.data)
         total_retrieved = list_members.data.items.length
         current_cursor = list_members.data.cursor
 
