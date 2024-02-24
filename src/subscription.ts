@@ -16,7 +16,11 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
     const postsToCreate = ops.posts.creates
       .filter((create) => {
         // only skybrarian posts
-        if (create.record.text.toLowerCase().includes(`${process.env.FEEDGEN_SYMBOL}`)) {
+        if (
+          create.record.text
+            .toLowerCase()
+            .includes(`${process.env.FEEDGEN_SYMBOL}`)
+        ) {
           if (all_members.includes(create.author)) {
             return true
           }
@@ -48,22 +52,27 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
   }
 
   async getMembers() {
-    const lists:string[] = `${process.env.FEEDGEN_LISTS}`.split("|")
+    const lists: string[] = `${process.env.FEEDGEN_LISTS}`.split('|')
     const agent = await getAgent()
-    let all_members:string[] = []
+    let all_members: string[] = []
 
     while (lists.length > 0) {
       const list = lists.pop()
       let total_retrieved = 1
-      let current_cursor:string|undefined = undefined
+      let current_cursor: string | undefined = undefined
 
       while (total_retrieved > 0) {
-        const list_members = await agent.api.app.bsky.graph.getList({list:`${list}`,limit:100,cursor:current_cursor})
+        const list_members = await agent.api.app.bsky.graph.getList({
+          list: `${list}`,
+          limit: 100,
+          cursor: current_cursor,
+        })
         total_retrieved = list_members.data.items.length
         current_cursor = list_members.data.cursor
 
         list_members.data.items.forEach((member) => {
-            if (!all_members.includes(member.subject.did)) all_members.push(member.subject.did)
+          if (!all_members.includes(member.subject.did))
+            all_members.push(member.subject.did)
         })
       }
     }
