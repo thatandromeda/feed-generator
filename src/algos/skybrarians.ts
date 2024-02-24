@@ -17,7 +17,6 @@ export const handler = async (ctx: AppContext, params: QueryParams) => {
     builder = builder.where('post.indexedAt', '<', timeStr)
   }
   const res = await builder.execute()
-  console.log(`Responses acquired: ${res}`)
 
   const feed = res.map((row) => ({
     post: row.uri,
