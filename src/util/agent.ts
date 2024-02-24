@@ -8,7 +8,7 @@ const handle = `${process.env.FEEDGEN_HANDLE}`
 // Ex: abcd-1234-efgh-5678
 const password = `${process.env.FEEDGEN_PASSWORD}`
 
-export async function getAgent() {
+async function getAgent() {
   const agent = new AtpAgent({ service: 'https://bsky.social' })
   try {
     await agent.login({ identifier: handle, password })
@@ -21,3 +21,5 @@ export async function getAgent() {
   console.log('💻 Logged in')
   return agent
 }
+
+export const agent = await getAgent()
