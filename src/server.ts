@@ -64,6 +64,8 @@ export class FeedGenerator {
   async start(): Promise<http.Server> {
     await migrateToLatest(this.db)
     this.firehose.run(this.cfg.subscriptionReconnectDelay)
+    // Update members once on startup, and then every 15 minutes thereafter.
+    this.firehose.updateMembers()
     setInterval(
       () => {
         try {
