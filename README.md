@@ -2,6 +2,10 @@
 
 This is a starter kit for creating ATProto Feed Generators. It's not feature complete, but should give you a good starting ground off of which to build and deploy a feed.
 
+## Local notes: deployment
+* this is set to deploy automatically on DigitalOcean, on push to main
+* After publish, you'll need to go to the console and run `yarn publishFeed`
+
 ## Overview
 
 Feed Generators are services that provide custom algorithms to users through the AT Protocol.
