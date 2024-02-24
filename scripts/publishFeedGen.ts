@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import { BlobRef } from '@atproto/api'
 import fs from 'fs/promises'
 import { ids } from '../src/lexicon/lexicons'
-import { getAgent } from '../src/util/agent';
+import { getAgent } from '../src/util/agent'
 
 const run = async () => {
   dotenv.config()
