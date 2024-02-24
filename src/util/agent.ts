@@ -10,7 +10,14 @@ const password = `${process.env.FEEDGEN_PASSWORD}`
 
 export async function getAgent() {
   const agent = new AtpAgent({ service: 'https://bsky.social' })
-  await agent.login({ identifier: handle, password })
+  try {
+    await agent.login({ identifier: handle, password })
+  } catch (error) {
+    // Wait a minute before trying again in case of rate limits.
+    setTimeout(() => {
+      console.log(error)
+    }, 60000)
+  }
   console.log('💻 Logged in')
   return agent
 }

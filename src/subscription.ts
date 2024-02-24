@@ -75,22 +75,19 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
           cursor: current_cursor,
         })
         // DEBUG: we are definitely getting so many members
-        console.log("Let's introspect us some data")
-        console.log(list_members.data.items.length)
-        console.log(list_members.data.cursor)
         total_retrieved = list_members.data.items.length
         current_cursor = list_members.data.cursor
 
         // DEBUG: This runs the first time through, and then we infinite-loop this.
         list_members.data.items.forEach((member) => {
           if (!all_members.includes(member.subject.did)) {
-            console.log(`Adding member ${member.subject.did}`)
             all_members.push(member.subject.did)
           }
         })
       }
     }
 
+    console.log('returning members')
     return all_members
   }
 }
