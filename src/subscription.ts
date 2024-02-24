@@ -59,26 +59,32 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
 
   async getMembers() {
     const lists: string[] = `${process.env.FEEDGEN_LISTS}`.split('|')
+    console.log(`📝 Lists found: ${lists}`)
     const agent = await getAgent()
     let all_members: string[] = []
 
     while (lists.length > 0) {
+      console.log('checking out a list')
       const list = lists.pop()
       let total_retrieved = 1
       let current_cursor: string | undefined = undefined
 
       while (total_retrieved > 0) {
+        console.log('something was retrieved')
         const list_members = await agent.api.app.bsky.graph.getList({
           list: `${list}`,
           limit: 100,
           cursor: current_cursor,
         })
+        console.log(`Found us some list members: ${list_members}`)
         total_retrieved = list_members.data.items.length
         current_cursor = list_members.data.cursor
 
         list_members.data.items.forEach((member) => {
-          if (!all_members.includes(member.subject.did))
+          if (!all_members.includes(member.subject.did)) {
+            console.log(`Adding member ${member.subject.did}`)
             all_members.push(member.subject.did)
+          }
         })
       }
     }
