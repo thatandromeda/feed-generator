@@ -57,11 +57,25 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
   }
 
   async getMembers() {
-    const lists: string[] = `${process.env.FEEDGEN_LISTS}`.split('|')
-    console.log(`📝 Lists found: ${lists}`)
-    const agent = await getAgent()
-    let all_members: string[] = []
+    const res = await this.db
+      .selectFrom('list_members')
+      .selectAll('list_members')
+      .execute()
 
+    return res.map((member) => member.did)
+  }
+
+  // Runs as a periodic task in server.ts.
+  // We don't want to hit rate limits by checking the list membership every time we
+  // update posts on the feed, so we'll just do this every now and again.
+  async updateMembers() {
+    console.log('Updating members...')
+    const lists: string[] = `${process.env.FEEDGEN_LISTS}`.split('|')
+    const agent = await getAgent()
+    const all_members: string[] = []
+    const all_members_obj: { did: string }[] = []
+
+    // Get members known to bluesky.
     while (lists.length > 0) {
       const list = lists.pop()
       let total_retrieved = 100
@@ -97,6 +111,20 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       }
     }
 
-    return all_members
+    // Transform member DID list into a shape the db will understand.
+    // (We didn't just start with this because itt was easier to use as a list in the
+    // loop.)
+    all_members.forEach((member) => {
+      all_members_obj.push({ did: member })
+    })
+
+    // Drop all old list members from the db; add the new ones.
+    await this.db.transaction().execute(async (trx) => {
+      await trx.deleteFrom('list_members').executeTakeFirstOrThrow()
+      await trx
+        .replaceInto('list_members')
+        .values(all_members_obj)
+        .executeTakeFirstOrThrow()
+    })
   }
 }

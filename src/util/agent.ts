@@ -15,7 +15,7 @@ export async function getAgent() {
   } catch (error) {
     // Wait a minute before trying again in case of rate limits.
     setTimeout(() => {
-      console.log(error)
+      console.log(`Could not log in: ${error}`)
     }, 60000)
   }
   console.log('💻 Logged in')

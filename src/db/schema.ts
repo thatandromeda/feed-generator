@@ -1,6 +1,7 @@
 export type DatabaseSchema = {
   post: Post
   sub_state: SubState
+  list_members: ListMember
 }
 
 export type Post = {
@@ -14,4 +15,8 @@ export type Post = {
 export type SubState = {
   service: string
   cursor: number
+}
+
+export type ListMember = {
+  did: string
 }
