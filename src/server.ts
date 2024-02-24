@@ -66,6 +66,7 @@ export class FeedGenerator {
     this.firehose.run(this.cfg.subscriptionReconnectDelay)
     this.server = this.app.listen(this.cfg.port, this.cfg.listenhost)
     await events.once(this.server, 'listening')
+    console.log("listening")
     return this.server
   }
 }
