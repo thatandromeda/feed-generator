@@ -25,6 +25,8 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
           // The db contains only DIDs, but this call returns them formatted as
           // `did:plc:did_goes_here`.
           const authorDID = create.author.replace('did:plc:', '')
+          console.log(`authorDID: ${authorDID}`)
+          console.log(all_members)
           if (all_members.includes(authorDID)) {
             console.log(
               `This should be a real post. Its author DID is ${authorDID}`,
@@ -49,7 +51,6 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       })
 
     if (postsToDelete.length > 0) {
-      console.log('there are posts to delete')
       await this.db
         .deleteFrom('post')
         .where('uri', 'in', postsToDelete)
