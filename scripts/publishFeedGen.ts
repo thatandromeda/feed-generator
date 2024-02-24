@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import { AtpAgent, BlobRef } from '@atproto/api'
+import { BlobRef } from '@atproto/api'
 import fs from 'fs/promises'
 import { ids } from '../src/lexicon/lexicons'
 import { getAgent } from '../src/util/agent';
@@ -7,14 +7,6 @@ import { getAgent } from '../src/util/agent';
 const run = async () => {
   dotenv.config()
   const agent = await getAgent()
-
-  // YOUR bluesky handle
-  // Ex: user.bsky.social
-  const handle = `${process.env.FEEDGEN_HANDLE}`
-
-  // YOUR bluesky password, or preferably an App Password (found in your client settings)
-  // Ex: abcd-1234-efgh-5678
-  const password = `${process.env.FEEDGEN_PASSWORD}`
 
   // A short name for the record that will show in urls
   // Lowercase with no spaces.
