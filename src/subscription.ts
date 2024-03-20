@@ -73,7 +73,11 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       .selectAll('list_members')
       .execute()
 
-    return res.map((member) => member.did)
+    const list_members = res.map((member) => member.did)
+    // For some reason it doesn't pick _me_ up as a member of my own list, even
+    // though I added myself to it. Explicitly add myself.
+    list_members.push('did:plc:a55ia2ojiv2cnshifmrc7wr6')
+    return list_members
   }
 
   // Runs as a periodic task in server.ts.
