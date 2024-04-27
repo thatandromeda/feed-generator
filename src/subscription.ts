@@ -73,11 +73,7 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
       .selectAll('list_members')
       .execute()
 
-    const list_members = res.map((member) => member.did)
-    // For some reason it doesn't pick _me_ up as a member of my own list, even
-    // though I added myself to it. Explicitly add myself.
-    list_members.push('did:plc:a55ia2ojiv2cnshifmrc7wr6')
-    return list_members
+    return res.map((member) => member.did)
   }
 
   // Runs as a periodic task in server.ts.
@@ -93,36 +89,32 @@ export class FirehoseSubscription extends FirehoseSubscriptionBase {
     // Get members known to bluesky.
     while (lists.length > 0) {
       const list = lists.pop()
-      let total_retrieved = 100
+      let total_retrieved = 0
       let current_cursor: string | undefined = undefined
 
-      // total_retrieved will be smaller than 100 when we run off the end of the cursor...
-      // unless we have a number of members evenly divisible by 100. Not sure how one was
-      // intended to handle this.
-      while (total_retrieved === 100) {
+      // The original logic here was broken in cases where there were 0 mod 100 people on
+      // the list, but my attempt to fix it truncated after 99 members. I'm just going to
+      // assume there are fewer than 1000 skybrarians and hope for the best.
+      while (total_retrieved <= 1000) {
         const list_members = await agent.api.app.bsky.graph.getList({
           list: `${list}`,
           limit: 100,
           cursor: current_cursor,
         })
-        total_retrieved = list_members.data.items.length
+        let current_retrieved = list_members.data.items.length
+
+        if (current_retrieved === 0) {
+          break
+        }
+
+        total_retrieved += current_retrieved
         current_cursor = list_members.data.cursor
 
-        let escapeLoop = true
         list_members.data.items.forEach((member) => {
           if (!all_members.includes(member.subject.did)) {
-            escapeLoop = false
             all_members.push(member.subject.did)
           }
         })
-
-        // In the case that the number of list members is evenly divisible by 100, the
-        // while loop will never terminate. We assume that, if we have added no new list
-        // members to all_members in this pass, we must be repeating ourselves. Time to
-        // flee the loop.
-        if (escapeLoop) {
-          break
-        }
       }
     }
 
