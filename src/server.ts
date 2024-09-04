@@ -33,9 +33,6 @@ export class FeedGenerator {
     const app = express()
     const db = createDb(cfg.sqliteLocation)
     const firehose = new FirehoseSubscription(db, cfg.subscriptionEndpoint)
-    // This is terrible, but I'm getting a lot of errors like the one here
-    // https://github.com/skyware-js/firehose/issues/1 .
-    firehose.on("error", (e) => console.error(e));
 
     const didCache = new MemoryCache()
     const didResolver = new DidResolver({
