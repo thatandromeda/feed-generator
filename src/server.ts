@@ -64,8 +64,23 @@ export class FeedGenerator {
   async start(): Promise<http.Server> {
     await migrateToLatest(this.db)
     this.firehose.run(this.cfg.subscriptionReconnectDelay)
+    // Update members once on startup, and then every 15 minutes thereafter.
+    this.firehose.updateMembers()
+    setInterval(
+      () => {
+        try {
+          console.log('Updating members...')
+          this.firehose.updateMembers()
+        } catch (e) {
+          console.log(`error updating members ${e.message}`)
+        }
+      },
+      // Every 15 minutes
+      15 * 60 * 1000,
+    )
     this.server = this.app.listen(this.cfg.port, this.cfg.listenhost)
     await events.once(this.server, 'listening')
+    console.log('listening')
     return this.server
   }
 }

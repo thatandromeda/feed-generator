@@ -8,6 +8,18 @@ export const migrationProvider: MigrationProvider = {
   },
 }
 
+migrations['002'] = {
+  async up(db: Kysely<unknown>) {
+    await db.schema
+      .createTable('list_members')
+      .addColumn('did', 'varchar', (col) => col.primaryKey())
+      .execute()
+  },
+  async down(db: Kysely<unknown>) {
+    await db.schema.dropTable('list_members').execute()
+  },
+}
+
 migrations['001'] = {
   async up(db: Kysely<unknown>) {
     await db.schema
